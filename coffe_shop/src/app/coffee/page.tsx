@@ -24,21 +24,22 @@ export default function SearchPage() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch(`${API}/api/coffee`, { credentials: "include" });
+        const res = await fetch(`${API}/api/coffee`, {
+          credentials: "include",
+        });
+
         if (!res.ok) throw new Error("Failed to load products");
-  
+
         const data: Product[] = await res.json();
-  
-        // เรียงตามชื่อสินค้า A → Z
         data.sort((a, b) => a.Product_Name.localeCompare(b.Product_Name));
-  
         setProducts(data);
-      } catch (error) {
-        console.error("Error loading products:", error);
+      } catch (err) {
+        console.error(err);
       } finally {
         setLoading(false);
       }
     };
+
     fetchProducts();
   }, []);
   
@@ -54,11 +55,8 @@ export default function SearchPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#fff2d8] py-8 px-6">
-      <h1 className="text-4xl font-bold text-center mb-10 text-gray-800">
-        ☕ Our Coffee Collection
-      </h1>
-
+    
+    <div className="min-h-screen py-8 px-6">
       {products.length === 0 ? (
         <p className="text-center text-gray-600">No products found 😢</p>
       ) : (
@@ -73,9 +71,9 @@ export default function SearchPage() {
                 <Image
                   src={item.Image_URL}
                   alt={item.Product_Name}
-                  width={350}
-                  height={220}
-                  className="rounded-t-lg object-cover w-full h-[220px]"
+                  width={500}
+                  height={600}
+                  className="rounded-t-lg object-cover w-full"
                   unoptimized
                 />
 

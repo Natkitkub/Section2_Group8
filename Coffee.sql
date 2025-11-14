@@ -68,7 +68,11 @@ CREATE TABLE Product (
 );
 
 INSERT INTO Product (Product_ID, Product_Name, Product_Source, Roast_Level, Size, Taste_Note, Price_per_kg, Image_URL) VALUES
+<<<<<<< HEAD
 ('1','Tum Ja Ja Blend','Brazil','Dark','1 kg','Bold and rich with notes of dark chocolate and roasted nuts. Full-bodied with a smoky finish — perfect for espresso lovers.',850.00,'https://i.pinimg.com/736x/76/cb/0a/76cb0a8eebf20c401fece9fdd452ba1e.jpg'),
+=======
+('1','Tum Ja Ja Blend','Brazil','D','1 kg','Bold and rich with notes of dark chocolate and roasted nuts. Full-bodied with a smoky finish — perfect for espresso lovers.',850.00,'https://i.pinimg.com/736x/76/cb/0a/76cb0a8eebf20c401fece9fdd452ba1e.jpg'),
+>>>>>>> c83d72eddc03a78c75055141ba23f4d12ed347af
 ('2','Andes Blend','Columbia','M','1 kg','A smooth balance of bright acidity and caramel sweetness, featuring the classic richness of Colombian coffee.',950.00,'https://i.pinimg.com/736x/81/7a/38/817a3844ae548bfa6f51670c68bfffd4.jpg'),
 ('3','Doichang Blend','Thai','M','500 g','Warm and comforting with soft milk chocolate and caramel tones. A true classic from the highlands of Thailand.',800.00,'https://i.pinimg.com/736x/73/9d/68/739d68379323c7413fd77be75963ad55.jpg'),
 ('4','Lalibela Blend','Ethiopia','L','1 kg','Floral and fruity with jasmine and citrus notes. Clean, tea-like body inspired by Ethiopian elegance.',1350.00,'https://i.pinimg.com/736x/17/c5/3a/17c53acb12816d45c0ab892ad7bf38a7.jpg'),
@@ -78,7 +82,11 @@ INSERT INTO Product (Product_ID, Product_Name, Product_Source, Roast_Level, Size
 ('8','House Blend','Japan','D','1 kg','A classic dark roast with nutty and caramelized aromas. Full and rich, perfect for milk-based drinks or daily brews.',850.00,'https://i.pinimg.com/736x/97/1b/16/971b16a55584591a68f792571bf02f72.jpg'),
 ('9','Maejuntai Blend','Thai','L','500 g','Bright and floral with fruit-forward acidity. Clean, sweet, and lively — the taste of northern Thai highlands.',950.00,'https://i.pinimg.com/736x/13/47/3b/13473bd51b27cc7fab5b26cc87574945.jpg'),
 ('10','Moonstones Blend','Ethiopia, Geisha','L','250 g','Fragrant and refined with jasmine and bergamot aromas. Silky and layered, offering a premium specialty experience.',1800.00,'https://i.pinimg.com/736x/22/10/72/2210725128778112ad50c8ad1efb6b18.jpg'),
+<<<<<<< HEAD
 ('11','Pangkhon Blend','Thai','M','500 g','Fresh and vibrant with hints of orange and red apple. Clean and balanced from Chiang Rai’s mountain farms.',1000.00,'https://i.pinimg.com/736x/b7/01/9f/b7019ffd91401c382192e3cdc2bba9ab.jpgv'),
+=======
+('11','Pangkhon Blend','Thai','M','500 g','Fresh and vibrant with hints of orange and red apple. Clean and balanced from Chiang Rai’s mountain farms.',1000.00,'https://i.pinimg.com/736x/b7/01/9f/b7019ffd91401c382192e3cdc2bba9ab.jpg'),
+>>>>>>> c83d72eddc03a78c75055141ba23f4d12ed347af
 ('12','Rebirth Blend','Thai, Japan','L','250 g','Refreshing fusion of watermelons and gentle yellow flowers tones. Smooth, light, and delicately floral.',1100.00,'https://i.pinimg.com/736x/b7/0c/ef/b70cef43fb85c98fd648675db3151d27.jpg'),
 ('13','Restinpeach Blend','Japan, Ethiopia','L','250 g','Juicy and sweet with notes of peach and summer flowers. Soft, refreshing, and relaxing on the palate.',1400.00,'https://i.pinimg.com/736x/2a/07/b9/2a07b9aae4467a13326d83bb8c368e41.jpg'),
 ('14','Rumbarel Blend','Europe','D','250 g','Deep and mature with rum-barrel warmth, chocolate, and nutty undertones. A sophisticated, smooth finish.',1520.00,'https://i.pinimg.com/736x/08/9d/f1/089df1d477ec655d47829c4dfdeca19b.jpg'),
