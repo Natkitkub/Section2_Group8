@@ -38,7 +38,7 @@ export default function SearchPage(){
    
     return(
         <div>
-            <div className="bg-gradient-to-br from-amber-50 to-orange-100 h-80 flex justify-center items-center">
+            <div className="bg-gradient-to-br from-amber-50 to-orange-100 h-50 flex justify-center items-center">
                 <h1 className="text-9xl text-amber-900 m-10 font-bold">Menu</h1>
             </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 m-15 justify-items-center">

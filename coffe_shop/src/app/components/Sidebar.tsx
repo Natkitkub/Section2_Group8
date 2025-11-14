@@ -17,14 +17,14 @@ export default function Sidebar() {
   const router = useRouter();
   const gotoHome = () => router.push('/');
   const gotoCoffee = () => router.push('/coffee');
-  const gotoAddProduct = () => router.push('/dasdboard/Product/Addproduct');
-  const gotoEditProduct = () => router.push('/dasdboard/Product');
-  const gotoDeleteProduct = () => router.push('/dasdboard/Product');
-  const gotoProduct = () => router.push('/dasdboard/Product');
-  const gotoAddUser = () => router.push('/dasdboard/User/Adduser');
-  const gotoEditUser = () => router.push('/dasdboard/User');
-  const gotoDeleteUser = () => router.push('/dasdboard/User');
-  const gotoUser = () => router.push('/dasdboard/User');
+  const gotoAddProduct = () => router.push('/dashboard/Product/Addproduct');
+  const gotoEditProduct = () => router.push('/dashboard/Product');
+  const gotoDeleteProduct = () => router.push('/dashboard/Product');
+  const gotoProduct = () => router.push('/dashboard/Product');
+  const gotoAddUser = () => router.push('/dashboard/User/Adduser');
+  const gotoEditUser = () => router.push('/dashboard/User');
+  const gotoDeleteUser = () => router.push('/dashboard/User');
+  const gotoUser = () => router.push('/dashboard/User');
 
 
   return (
