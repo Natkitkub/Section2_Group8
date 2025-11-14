@@ -45,7 +45,7 @@ export default function Login() {
       console.log("Login Response:", data);
 
       if (["Nattakit", "Babu", "Ton", "Toy"].includes(data.found)) {
-        router.push("/dasdboard/Product");
+        router.push("/dashboard/Product");
       } else if (data.found) {
         router.push("/");
       } else {
