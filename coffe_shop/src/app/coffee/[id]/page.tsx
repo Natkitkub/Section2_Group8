@@ -1,12 +1,6 @@
 "use client";
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
-// import LoadingScene from "../../components/loadingScene";
-
-// --------------------------------------------------
-// หมายเหตุ: ผมเพิ่ม LoadingScene จำลองไว้ตรงนี้
-// เพื่อให้โค้ดทำงานได้โดยไม่ต้องสร้างไฟล์เพิ่มครับ
-// --------------------------------------------------
 function LoadingScene() {
   return (
     <div className="flex h-screen w-full items-center justify-center">
@@ -14,11 +8,9 @@ function LoadingScene() {
     </div>
   );
 }
-// --------------------------------------------------
 
 type Size = "200g" | "500g" | "1KG";
 
-// เพิ่ม Type/Interface ของ Product เพื่อความชัดเจน
 interface Product {
   Product_ID: string;
   Product_Name: string;
@@ -33,37 +25,26 @@ export default function DetailPage() {
   const { id } = useParams();
   const [favorite, setFavorite] = useState(false);
   const [size, setSize] = useState<Size>("200g");
-  const [qty, setQty] = useState<number>(0);
+  const [qty, setQty] = useState(0);
   const [loading, setLoading] = useState(true);
   const [product, setProduct] = useState<Product | null>(null);
 
-  const sizes: Size[] = ["200g", "500g", "1KG"];
-
   const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5050";
 
-
   useEffect(() => {
-    
-    // id อาจจะเป็น string หรือ string[] ก็ได้
     const productId = Array.isArray(id) ? id[0] : id;
     if (!productId) return;
 
     const fetchProduct = async () => {
       try {
-        // fetch จาก /api/coffee/[id] ซึ่งจะไปเรียกไฟล์ที่ 2
+        const res = await fetch(`${API}/api/coffee/${productId}`);
+        if (!res.ok) throw new Error("Failed to load product");
 
-        const res = await fetch(`${API}/api/coffee/${productId}`, {
-          credentials: "include",
-        });
-        
-        if (!res.ok) {
-          throw new Error("Failed to load product");
-        }
         const data = await res.json();
         setProduct(data);
       } catch (err) {
         console.error(err);
-        setProduct(null); // ถ้า fetch ไม่ได้ ก็ไม่ควรมี product
+        setProduct(null);
       } finally {
         setLoading(false);
       }
@@ -72,7 +53,6 @@ export default function DetailPage() {
   }, [id]);
 
   if (loading) return <LoadingScene />;
-  
   if (!product)
     return (
       <div className="text-center py-20 text-gray-600">
@@ -99,7 +79,7 @@ export default function DetailPage() {
           />
         </div>
 
-        {/* 🔹 รายละเอียดสินค้า */}
+        {/* 🔹 รายละเอียด */}
         <div className="flex flex-col justify-between gap-6">
           <div className="space-y-6">
             <div>
@@ -117,14 +97,14 @@ export default function DetailPage() {
               <p><span className="font-semibold">Roast Level:</span> {product.Roast_Level}</p>
             </div>
 
-            {/* 🔹 ขนาด Size */}
+            {/* Size */}
             <div>
               <h2 className="font-semibold text-lg mb-4">Size</h2>
               <div className="flex gap-3">
-                {sizes.map((s) => (
+                {["200g", "500g", "1KG"].map((s) => (
                   <button
                     key={s}
-                    onClick={() => setSize(s)}
+                    onClick={() => setSize(s as Size)}
                     className={`px-6 py-3 rounded-lg border-2 transition-all font-medium ${
                       size === s
                         ? "bg-gray-900 text-white border-gray-900 shadow-md"
@@ -137,7 +117,7 @@ export default function DetailPage() {
               </div>
             </div>
 
-            {/* 🔹 จำนวน */}
+            {/* Qty */}
             <div className="flex items-center justify-center">
               <div className="flex items-center border-2 border-gray-300 rounded-lg bg-white">
                 <button
@@ -157,22 +137,13 @@ export default function DetailPage() {
             </div>
           </div>
 
-          {/* 🔹 ปุ่มซื้อ */}
-          <div className="mt-6">
-            <button
-              onClick={() =>
-                // ---------------------------------
-                // 🔹 แก้ไข: เปลี่ยนจาก alert เป็น console.log
-                // ---------------------------------
-                console.log(
-                  `ซื้อ ${qty} ชิ้น ขนาด ${size} ของ ${product.Product_Name}`
-                )
-              }
-              className="w-full bg-gray-900 text-white py-4 px-6 rounded-lg hover:bg-gray-800 transition-colors font-semibold text-lg shadow-lg"
-            >
-              Buy Now
-            </button>
-          </div>
+          {/* Buy */}
+          <button
+            onClick={() => console.log(`ซื้อ ${qty} ชิ้น ขนาด ${size} ของ ${product.Product_Name}`)}
+            className="w-full bg-gray-900 text-white py-4 px-6 rounded-lg hover:bg-gray-800 transition-colors font-semibold text-lg shadow-lg"
+          >
+            Buy Now
+          </button>
         </div>
       </div>
     </main>
