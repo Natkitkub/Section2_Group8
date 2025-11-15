@@ -36,8 +36,10 @@ export default function AddUserAccount() {
   };
 
   const handleSave = () => {
-    console.log('Saving user:', formData);
-    alert('บันทึกข้อมูลสำเร็จ!');
+    console.log("📌 Saving user data...");
+  Object.entries(formData).forEach(([key, value]) => {
+    console.log(`${key}:`, value)});
+    alert("Save !!!")
   };
 
   const handleCancel = () => {
