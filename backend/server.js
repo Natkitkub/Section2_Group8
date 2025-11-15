@@ -6,8 +6,6 @@ import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
 
-
-
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.join(__dirname, ".env") });
 
@@ -27,7 +25,7 @@ app.use(
   })
 );
 
-// ⭐ สำคัญมาก — เปิด static ให้รูปขึ้นได้
+// static
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // ==========================
@@ -61,7 +59,7 @@ app.get("/health", async (req, res) => {
 });
 
 // ==========================
-// Login API (เหมือนเดิม)
+// Login API
 // ==========================
 app.post("/api/login", async (req, res) => {
   const { Username, Password } = req.body;
@@ -93,7 +91,7 @@ app.post("/api/login", async (req, res) => {
 });
 
 // ==========================
-// Check Session (เหมือนเดิม)
+// Check Session
 // ==========================
 app.get("/api/check-session", (req, res) => {
   const session = req.cookies?.session;
@@ -102,12 +100,12 @@ app.get("/api/check-session", (req, res) => {
 });
 
 // ==========================
-// GET ALL PRODUCTS (แก้เรียง ID + ใช้ Price_per_kg)
+// GET ALL PRODUCTS
 // ==========================
 app.get("/api/coffee", async (req, res) => {
   try {
     const [rows] = await connection.query(
-      "SELECT * FROM Product ORDER BY CAST(Product_ID AS UNSIGNED) ASC"
+      "SELECT * FROM Product ORDER BY CAST(Product_ID AS UNSIGNED)"
     );
     res.json(rows);
   } catch (err) {
@@ -117,7 +115,7 @@ app.get("/api/coffee", async (req, res) => {
 });
 
 // ==========================
-// GET PRODUCT BY ID (เหมือนเดิม)
+// GET PRODUCT BY ID
 // ==========================
 app.get("/api/coffee/:id", async (req, res) => {
   const id = req.params.id;
@@ -126,7 +124,6 @@ app.get("/api/coffee/:id", async (req, res) => {
       "SELECT * FROM Product WHERE Product_ID = ?",
       [id]
     );
-
     if (rows.length === 0)
       return res.status(404).json({ message: "Product not Found" });
 
@@ -137,88 +134,62 @@ app.get("/api/coffee/:id", async (req, res) => {
   }
 });
 
-// ==========================
-// SEARCH PRODUCT (แก้ name/source/roast + minPrice + order)
+// ========================================
+// 🔍 SEARCH PRODUCT (แก้แบบซัพพอร์ตทุกเคสจริง)
+// ========================================
+
+function normalizeSize(size) {
+  return size.replace(/\s+/g, "").toLowerCase();  // "250 g" => "250g"
+}
+
+function normalizeSource(source) {
+  return source.trim().toLowerCase();
+}
+
 app.get("/product/search", async (req, res) => {
-  const { id, name, minPrice } = req.query;
+  const { name, source, roast, size } = req.query;
 
   let sql = "SELECT * FROM Product WHERE 1=1";
   const params = [];
 
-  // 🔍 Search by ID (fix → compare numeric)
-  if (id) {
-    sql += " AND CAST(Product_ID AS UNSIGNED) = CAST(? AS UNSIGNED)";
-    params.push(id);
-  }
-
-  // 🔍 Search by Name
-  if (name) {
+  // NAME
+  if (name && name.trim() !== "") {
     sql += " AND Product_Name LIKE ?";
     params.push(`%${name}%`);
   }
 
-  // 🔍 Price >=
-  if (minPrice) {
-    sql += " AND Price_per_kg = ?";
-    params.push(Number(minPrice));
+  // SOURCE (รองรับหลายประเทศในช่องเดียว เช่น "Brazil, Japan")
+  if (source && source.trim() !== "") {
+    sql += " AND LOWER(Product_Source) LIKE ?";
+    params.push(`%${normalizeSource(source)}%`);
   }
-  
 
+  // ROAST
+  if (roast && roast !== "all") {
+    sql += " AND Roast_Level = ?";
+    params.push(roast);
+  }
 
-  sql += " ORDER BY CAST(Product_ID AS UNSIGNED) ASC";
+  // SIZE
+  if (size) {
+    const sizeList = size.split(",").map((s) => normalizeSize(s));
+
+    const placeholders = sizeList.map(() => "?").join(",");
+
+    sql += ` AND REPLACE(LOWER(Size), ' ', '') IN (${placeholders})`;
+    params.push(...sizeList);
+  }
+
+  sql += " ORDER BY CAST(Product_ID AS UNSIGNED)";
 
   try {
     const [rows] = await connection.query(sql, params);
     res.json(rows);
   } catch (err) {
-    console.error("❌ Search error:", err);
-    res.status(500).json({ message: "Search error" });
+    console.error("❌ Search Error:", err);
+    res.status(500).json({ message: "Search Error" });
   }
 });
-
-
-// Coffee Quote API (Server-side Proxy สำหรับ Zen Quotes)
-app.get("/api/coffee-quote", async (req, res) => {
-  const coffeeList = [
-    { name: "Americano", image: "/images/coffeemenu/americano.png" },
-    { name: "Cappuccino", image: "/images/HomePage/icaramelmac.png" },
-    { name: "Matcha Latte", image: "/images/HomePage/mtchlatte.png" },
-  ];
-
-  let quote = "Coffee is always a good idea.";
-  let author = "Anonymous";
-
-  try {
-    const response = await fetch("https://zenquotes.io/api/random");
-
-    if (response.ok) {
-      const data = await response.json();
-      if (Array.isArray(data) && data[0]) {
-        quote = data[0].q;
-        author = data[0].a;
-      }
-    }
-  } catch (err) {
-    console.error("ZenQuotes Error:", err.message);
-  }
-
-  const coffee = coffeeList[Math.floor(Math.random() * coffeeList.length)];
-
-  return res.json({
-    quote,
-    author,
-    coffeeName: coffee.name,
-    coffeeImage: coffee.image,
-  });
-});
-
-
-
-
-
-
-
-
 
 // ==========================
 // START SERVER
