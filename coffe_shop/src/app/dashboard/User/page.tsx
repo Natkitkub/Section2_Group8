@@ -1,52 +1,88 @@
 "use client";
-import React, { useState } from 'react';
-import { Search, User, Plus, Edit2, Trash2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect } from "react";
+import { Search, User, Plus, Edit2, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
-export default function ProductManagement() {
+export default function UserManagement() {
   const router = useRouter();
-  const gotoAdduser = () => {router.push('/dasdboard/User/Adduser');};
-  const gotoEdituser = () => {router.push(`/dasdboard/User/Edituser`);};
-  const gotoDeleteuser = () => {router.push('/dasdboard/User/Deleteuser');};
 
+  // ไปหน้า Add/Edit/Delete
+  const gotoAdduser = () => router.push("/dasdboard/User/Adduser");
+  const gotoEdituser = (id: string) =>
+    router.push(`/dasdboard/User/Edituser?id=${id}`);
+  const gotoDeleteuser = (id: string) =>
+    router.push(`/dasdboard/User/Deleteuser?id=${id}`);
+
+  // ฟอร์มค้นหา
   const [searchForm, setSearchForm] = useState({
-    userId: '',
-    userName: '',
-    email: ''
+    userId: "",
+    userName: "",
+    email: "",
   });
 
-  const [products] = useState([
-    { id: 'U001', name: 'john_doe', Email: 'john@gmail.com', Firstname: 'John', Lastname: 'Doe' },
-    { id: 'U002', name: 'jane_smith', Email: 'jane@gmail.com', Firstname: 'Jane', Lastname: 'Smith'},
-    { id: 'U003', name: 'mike_wilson', Email: 'mike@gmail.com', Firstname: 'Mike', Lastname: 'Wilson'}
-  ]);
+  // สร้างตัวแปรเก็บ user จาก database
+  const [users, setUsers] = useState<any[]>([]);
+  const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5050";
 
+  // ดึงข้อมูล user ครั้งแรกตอนโหลดหน้า
+  useEffect(() => {
+    fetchAllUsers();
+  }, []);
+
+  // ดึง User ทั้งหมดจาก backend
+  const fetchAllUsers = async () => {
+    try {
+      const res = await fetch(`${API}/api/users`);
+      const data = await res.json();
+      setUsers(data);
+    } catch (err) {
+      console.error("❌ Fetch users error:", err);
+    }
+  };
+
+  // อัปเดตช่องกรอก search
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setSearchForm(prev => ({
+    setSearchForm((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
-  const handleSearch = () => {
-    console.log('Searching with:', searchForm);
+  // กดปุ่ม Search
+  const handleSearch = async () => {
+    try {
+      const params = new URLSearchParams();
+
+      if (searchForm.userId.trim() !== "")
+        params.append("userID", searchForm.userId.trim());
+
+      if (searchForm.userName.trim() !== "")
+        params.append("username", searchForm.userName.trim());
+
+      if (searchForm.email.trim() !== "")
+        params.append("email", searchForm.email.trim());
+
+      const res = await fetch(
+        `${API}/api/users/search?${params.toString()}`
+      );
+      const data = await res.json();
+      setUsers(data);
+    } catch (err) {
+      console.error("❌ Search error:", err);
+    }
   };
 
   return (
     <div className="flex min-h-screen w-full bg-gray-700">
-      {/* Empty space for sidebar */}
       <div className="w-80"></div>
-      
-      {/* Main Content */}
+
       <div className="flex-1 p-8 flex flex-col">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-white text-3xl ">User Account Management</h2>
-        </div>
-        <hr className="mb-6 border-white"/>
+        <h2 className="text-white text-3xl mb-6">User Account Management</h2>
+        <hr className="mb-6 border-white" />
 
         <div className="bg-white rounded-3xl p-8 flex-1">
-          {/* Search Section */}
+          {/* SEARCH SECTION */}
           <div className="bg-gray-300 rounded-2xl p-6 mb-6">
             <div className="flex items-center gap-3 mb-6">
               <div className="bg-black p-3 rounded-lg">
@@ -67,6 +103,7 @@ export default function ProductManagement() {
                   className="w-full px-4 py-2 rounded-lg bg-white border-0"
                 />
               </div>
+
               <div>
                 <label className="block font-semibold mb-2">UserName</label>
                 <input
@@ -78,6 +115,7 @@ export default function ProductManagement() {
                   className="w-full px-4 py-2 rounded-lg bg-white border-0"
                 />
               </div>
+
               <div>
                 <label className="block font-semibold mb-2">Email</label>
                 <input
@@ -102,7 +140,7 @@ export default function ProductManagement() {
             </div>
           </div>
 
-          {/* Product Information Section */}
+          {/* USER INFORMATION Table */}
           <div className="bg-gray-300 rounded-2xl p-6">
             <div className="flex items-center gap-3 mb-6">
               <div className="bg-black p-3 rounded-lg">
@@ -111,7 +149,7 @@ export default function ProductManagement() {
               <span className="font-semibold text-xl">User Information</span>
             </div>
 
-            {/* Table Header */}
+            {/* Header */}
             <div className="grid grid-cols-12 gap-4 mb-4 pb-3 border-b-2 border-gray-400">
               <div className="col-span-2 font-semibold">User ID</div>
               <div className="col-span-2 font-semibold">UserName</div>
@@ -119,37 +157,50 @@ export default function ProductManagement() {
               <div className="col-span-2 font-semibold">FirstName</div>
               <div className="col-span-1 font-semibold">LastName</div>
               <div className="col-span-2 flex justify-end">
-                <button 
-                onClick = {gotoAdduser}
-                className="bg-green-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-600 transition">
-                  <Plus className="w-4 h-4" />
-                  ADD
+                <button
+                  onClick={gotoAdduser}
+                  className="bg-green-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-600 transition"
+                >
+                  <Plus className="w-4 h-4" /> ADD
                 </button>
               </div>
             </div>
 
             {/* User Rows */}
-            {products.map((product, index) => (
-              <div key={index} className="grid grid-cols-12 gap-4 items-center py-4 border-b border-gray-400">
-                <div className="col-span-2 text-gray-600">{product.id}</div>
-                <div className="col-span-2 text-gray-600">{product.name}</div>
-                <div className="col-span-3 text-gray-600">{product.Email}</div>
-                <div className="col-span-2 text-gray-600">{product.Firstname}</div>
-                <div className="col-span-1 text-gray-600">{product.Lastname}</div>
+            {users.map((u, index) => (
+              <div
+                key={index}
+                className="grid grid-cols-12 gap-4 items-center py-4 border-b border-gray-400"
+              >
+                <div className="col-span-2 text-gray-600">{u.User_ID}</div>
+                <div className="col-span-2 text-gray-600">{u.Username}</div>
+                <div className="col-span-3 text-gray-600">{u.Email}</div>
+                <div className="col-span-2 text-gray-600">{u.First_Name}</div>
+                <div className="col-span-1 text-gray-600">{u.Last_Name}</div>
+
                 <div className="col-span-2 flex justify-end gap-2">
-                  <button 
-                  onClick={gotoEdituser}
-                  className="p-2 hover:bg-gray-400 rounded-lg transition">
+                  <button
+                    onClick={() => gotoEdituser(u.User_ID)}
+                    className="p-2 hover:bg-gray-400 rounded-lg transition"
+                  >
                     <Edit2 className="w-5 h-5 text-gray-700" />
                   </button>
-                  <button 
-                  onClick={gotoDeleteuser}
-                  className="p-2 hover:bg-gray-400 rounded-lg transition">
+
+                  <button
+                    onClick={() => gotoDeleteuser(u.User_ID)}
+                    className="p-2 hover:bg-gray-400 rounded-lg transition"
+                  >
                     <Trash2 className="w-5 h-5 text-red-500" />
                   </button>
                 </div>
               </div>
             ))}
+
+            {users.length === 0 && (
+              <div className="text-center py-4 text-gray-600">
+                No results found.
+              </div>
+            )}
           </div>
         </div>
       </div>
