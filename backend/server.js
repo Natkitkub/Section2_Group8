@@ -89,6 +89,39 @@ app.post("/api/login", async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
+
+// Coffee Quote API (Server-side Proxy สำหรับ Zen Quotes)
+app.get("/api/coffee-quote", async (req, res) => {
+  const coffeeList = [
+    { name: "Americano", image: "/images/coffeemenu/americano.png" },
+    { name: "Cappuccino", image: "/images/HomePage/icaramelmac.png" },
+    { name: "Matcha Latte", image: "/images/HomePage/mtchlatte.png" },
+  ];
+
+  try {
+    const response = await fetch("https://zenquotes.io/api/random");
+    const data = await response.json();
+
+    const coffee = coffeeList[Math.floor(Math.random() * coffeeList.length)];
+
+    res.json({
+      quote: data[0]?.q || "Coffee is always a good idea.",
+      author: data[0]?.a || "Anonymous",
+      coffeeName: coffee.name,
+      coffeeImage: coffee.image,
+    });
+  } catch (err) {
+    res.status(500).json({
+      quote: "Coffee is always a good idea.",
+      author: "Anonymous",
+      coffeeName: coffeeList[0].name,
+      coffeeImage: coffeeList[0].image,
+    });
+  }
+});
+
+
+
 // ==========================
 // GET ALL USERS
 // ==========================

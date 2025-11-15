@@ -52,23 +52,30 @@ export default function Home() {
   const fetchCoffeeQuote = async () => {
     try {
       const res = await fetch("http://localhost:5050/api/coffee-quote");
+  
+      if (!res.ok) {
+        throw new Error(`HTTP error! Status: ${res.status}`);
+      }
+  
       const data = await res.json();
       setCoffeeQuote(data);
       setShowModal(true);
     } catch (err) {
       console.error("Failed to fetch quote:", err);
-
-      // ⭐ fallback เมื่อ API ล่ม
+  
+      // fallback: ใช้ quote และภาพจากรายการสำรอง
       setCoffeeQuote({
         quote: "Coffee is always a good idea.",
         author: "Anonymous",
         coffeeName: "Americano",
-        coffeeImage: americano.src, // ⭐ ใช้ .src เพื่อไม่ error
+        coffeeImage: americano.src, // ใช้ .src เพื่อไม่ให้เกิด error
       });
-
+  
       setShowModal(true);
     }
   };
+  
+  
 
   if (loading) return <LoadingScene />;
 
