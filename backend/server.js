@@ -89,6 +89,87 @@ app.post("/api/login", async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
+// ==========================
+// GET ALL USERS
+// ==========================
+app.get("/api/users", async (req, res) => {
+  try {
+    const [rows] = await connection.query(`
+      SELECT 
+        u.User_ID,
+        u.Username,
+        u.First_Name,
+        u.Last_Name,
+        u.Address,
+        u.Phone_Number,
+        u.Role,
+        u.Is_Active,
+        u.Last_Login,
+        e.Email
+      FROM User_Account u
+      LEFT JOIN User_Email e ON u.User_ID = e.User_ID
+      ORDER BY u.User_ID
+    `);
+
+    res.json(rows);
+  } catch (err) {
+    console.error("❌ Error fetching users:", err.message);
+    res.status(500).json({ message: "Database Error" });
+  }
+});
+
+
+// ==========================
+// SEARCH USERS
+// ==========================
+app.get("/api/users/search", async (req, res) => {
+  const { userID, username, email } = req.query;
+
+  let sql = `
+    SELECT 
+      u.User_ID,
+      u.Username,
+      u.First_Name,
+      u.Last_Name,
+      u.Address,
+      u.Phone_Number,
+      u.Role,
+      u.Is_Active,
+      u.Last_Login,
+      e.Email
+    FROM User_Account u
+    LEFT JOIN User_Email e ON u.User_ID = e.User_ID
+    WHERE 1=1
+  `;
+  const params = [];
+
+  // Search conditions
+  if (userID) {
+    sql += " AND u.User_ID LIKE ?";
+    params.push(`%${userID}%`);
+  }
+
+  if (username) {
+    sql += " AND u.Username LIKE ?";
+    params.push(`%${username}%`);
+  }
+
+  if (email) {
+    sql += " AND e.Email LIKE ?";
+    params.push(`%${email}%`);
+  }
+
+  sql += " ORDER BY u.User_ID";
+
+  try {
+    const [rows] = await connection.query(sql, params);
+    res.json(rows);
+  } catch (err) {
+    console.error("❌ Search user error:", err.message);
+    res.status(500).json({ message: "Search Error" });
+  }
+});
+
 
 // ==========================
 // Check Session
