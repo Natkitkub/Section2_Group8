@@ -7,11 +7,11 @@ export default function UserManagement() {
   const router = useRouter();
 
   // ไปหน้า Add/Edit/Delete
-  const gotoAdduser = () => router.push("/dasdboard/User/Adduser");
+  const gotoAdduser = () => router.push("/dashboard/User/Adduser");
   const gotoEdituser = (id: string) =>
-    router.push(`/dasdboard/User/Edituser?id=${id}`);
+    router.push(`/dashboard/User/Edituser?id=${id}`);
   const gotoDeleteuser = (id: string) =>
-    router.push(`/dasdboard/User/Deleteuser?id=${id}`);
+    router.push(`/dashboard/User/Deleteuser?id=${id}`);
 
   // ฟอร์มค้นหา
   const [searchForm, setSearchForm] = useState({
