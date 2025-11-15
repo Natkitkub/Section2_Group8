@@ -1,7 +1,6 @@
 "use client";
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
-
 function LoadingScene() {
   return (
     <div className="flex h-screen w-full items-center justify-center">
@@ -50,12 +49,10 @@ export default function DetailPage() {
         setLoading(false);
       }
     };
-
     fetchProduct();
   }, [id]);
 
   if (loading) return <LoadingScene />;
-
   if (!product)
     return (
       <div className="text-center py-20 text-gray-600">
@@ -66,7 +63,6 @@ export default function DetailPage() {
   return (
     <main className="w-full flex items-center justify-center mt-3 pb-3">
       <div className="max-w-6xl w-full bg-[#fff2d8] rounded-xl shadow-lg p-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
-
         {/* 🔹 รูปสินค้า */}
         <div className="relative flex items-center justify-center bg-gray-100 rounded-xl overflow-hidden h-96 lg:h-auto">
           <button
